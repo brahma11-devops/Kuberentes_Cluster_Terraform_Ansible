@@ -1,6 +1,10 @@
 variable "aws_region" {
   default = "ap-south-1"
 }
+
+variable "key_name" {
+  default = "devops"
+}
 variable "vpc_cidr" {
   default = "172.0.0.0/24"
 }
