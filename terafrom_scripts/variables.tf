@@ -1,9 +1,9 @@
 variable "aws_region" {
-  default = "ap-south-1"
+  default = "eu-west-2"
 }
 
 variable "key_name" {
-  default = "devops"
+  default = "DevOps15.pem"
 }
 variable "vpc_cidr" {
   default = "172.0.0.0/24"
@@ -14,10 +14,10 @@ variable "subnets_cidr" {
 }
 variable "availability_zones" {
   type    = list(string)
-  default = ["ap-south-1a", "ap-south-1b"]
+  default = ["eu-west-2a", "eu-west-2b"]
 }
 variable "kubernetes_ami" {
-  default = "ami-0b44050b2d893d5f7"
+  default = "ami-005383956f2e5fb96"
 }
 variable "master_instance_type" {
   default = "t2.medium"

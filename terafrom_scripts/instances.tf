@@ -7,6 +7,15 @@ resource "tls_private_key" "ansible" {
 resource "aws_key_pair" "ansiblesshkey" {
   public_key = tls_private_key.ansible.public_key_openssh
 }
+locals {
+user_data = <<EOF
+#!/usr/bin/env bash
+sudo useradd ansible
+echo "ansible  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+sudo sed -re 's/^(PasswordAuthentication)([[:space:]]+)yes/\1\2no/' -i.`date -I` /etc/ssh/sshd_config
+sudo service sshd restart
+EOF
+}
 
 resource "aws_instance" "kubernetes_Servers" {
   count                  = 1
@@ -15,7 +24,7 @@ resource "aws_instance" "kubernetes_Servers" {
   vpc_security_group_ids = [aws_security_group.kubernetes_sg.id]
   subnet_id              = element(aws_subnet.kubernetes_subnets.*.id, count.index)
   key_name               = var.key_name
-  user_data              = "${file("terafrom_scripts/create_ansible_user.sh")}"
+  user_data              = local.user_data
 
   tags = {
     Name = "Kubernetes_Servers"
@@ -38,7 +47,7 @@ resource "aws_instance" "kubernetes_Workers" {
   vpc_security_group_ids = [aws_security_group.kubernetes_sg.id]
   subnet_id              = element(aws_subnet.kubernetes_subnets.*.id, count.index)
   key_name               = var.key_name
-  user_data              = "${file("terafrom_scripts/create_ansible_user.sh")}"
+  user_data              = local.user_data
 
   tags = {
     Name = "Kubernetes_Servers"
